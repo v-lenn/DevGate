@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>DevGate Protection Dashboard</title>
+	<!-- SEO / Metas -->
+	<meta name="description" content="Contemplative developer security gateway. Real-time threat prevention and behavior analysis.">
+	<!-- Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+	<!-- Styles -->
+	<link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+
+	<!-- Centered Site Navigation -->
+	<nav class="nav-bar">
+		<div class="nav-container">
+			<div class="nav-left">
+				<button class="nav-item active" id="tab-btn-live" onclick="switchTab('live')">
+					Live Feed
+				</button>
+				<button class="nav-item" id="tab-btn-lists" onclick="switchTab('lists')">
+					Custom Lists
+				</button>
+				<button class="nav-item" id="tab-btn-settings" onclick="switchTab('settings')">
+					Settings
+				</button>
+			</div>
+			
+			<div class="logo">
+				<img src="/logo.png" class="logo-img" alt="DevGate Logo">
+				<span class="logo-text">DEVGATE</span>
+			</div>
+			
+			<div class="nav-right">
+				<div class="status-badge" id="protection-status">
+					<div class="status-dot"></div>
+					<span class="status-text">Active Protection</span>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Main Centered Layout Container -->
+	<div class="app-layout">
+		<!-- Hero Area with Animated Cyber Security Grid Backdrop -->
+		<section class="hero-section">
+			<div class="landscape-backdrop-wrapper">
+				<svg class="security-grid-backdrop" viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+					<defs>
+						<!-- Hex/Grid Pattern -->
+						<pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+							<path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--color-forest-floor)" stroke-width="0.75" opacity="0.4" />
+						</pattern>
+						<radialGradient id="glow-grad" cx="20%" cy="50%" r="50%">
+							<stop offset="0%" stop-color="var(--color-warm-loam)" stop-opacity="0.15" />
+							<stop offset="100%" stop-color="var(--color-cream-paper)" stop-opacity="0" />
+						</radialGradient>
+					</defs>
+					
+					<!-- Background Fill -->
+					<rect width="1440" height="120" fill="var(--color-cream-paper)" />
+					<!-- Grid Overlay -->
+					<rect width="1440" height="120" fill="url(#grid-pattern)" />
+					
+					<!-- Security Network Nodes & Paths -->
+					<path d="M 100 20 L 250 80 L 400 40 L 600 90 L 800 30 L 950 80 L 1200 40 L 1350 100" stroke="var(--color-forest-floor)" stroke-width="1" stroke-dasharray="3 3" opacity="0.6" />
+					<path d="M 150 100 L 300 40 L 500 80 L 700 30 L 900 90 L 1100 40 L 1250 80" stroke="var(--color-eucalyptus)" stroke-width="1" opacity="0.4" />
+					
+					<!-- Pulsing Nodes -->
+					<circle cx="100" cy="20" r="3" fill="var(--color-forest-floor)" />
+					<circle cx="250" cy="80" r="5" fill="var(--color-warm-loam)" class="pulse-node" />
+					<circle cx="400" cy="40" r="3.5" fill="var(--color-forest-floor)" />
+					<circle cx="600" cy="90" r="6" fill="var(--color-forest-floor)" class="pulse-node" />
+					<circle cx="800" cy="30" r="3" fill="var(--color-warm-loam)" />
+					<circle cx="950" cy="80" r="5.5" fill="var(--color-forest-floor)" class="pulse-node" />
+					<circle cx="1200" cy="40" r="3" fill="var(--color-forest-floor)" />
+					
+					<circle cx="300" cy="40" r="4" fill="var(--color-forest-floor)" />
+					<circle cx="500" cy="80" r="5" fill="var(--color-warm-loam)" class="pulse-node" />
+					<circle cx="700" cy="30" r="3" fill="var(--color-forest-floor)" />
+					<circle cx="900" cy="90" r="5" fill="var(--color-forest-floor)" class="pulse-node" />
+					
+					<!-- Glow behind title -->
+					<circle cx="300" cy="60" r="200" fill="url(#glow-grad)" />
+				</svg>
+			</div>
+			
+			<div class="hero-content">
+				<div class="hero-text-align">
+					<div class="micro-label hero-tag">DEVGATE PROXY</div>
+					<h1 id="page-title" class="hero-title">Live Threat Feed</h1>
+				</div>
+			</div>
+		</section>
+
+		<!-- Main Content Panels -->
+		<main class="main-content">
+			<!-- ==================== LIVE FEED TAB ==================== -->
+			<div class="tab-content active" id="tab-live">
+				<!-- Staggered Stats Grid -->
+				<div class="stats-grid">
+					<div class="stat-box">
+						<span class="stat-label">Total Requests</span>
+						<span class="stat-value" id="stat-total">0</span>
+					</div>
+					<div class="stat-box blocked">
+						<span class="stat-label">Blocked Connections</span>
+						<span class="stat-value" id="stat-blocked">0</span>
+					</div>
+					<div class="stat-box poisoned">
+						<span class="stat-label">Poisoned Exfils</span>
+						<span class="stat-value" id="stat-poisoned">0</span>
+					</div>
+					<div class="stat-box squats">
+						<span class="stat-label">Suspect Typosquats</span>
+						<span class="stat-value" id="stat-squats">0</span>
+					</div>
+				</div>
+
+				<div class="card-surface logs-container">
+					<div class="card-header logs-header">
+						<div class="micro-label card-title">Real-Time Threat Logs</div>
+						<div class="log-controls">
+							<input type="text" id="log-search-input" placeholder="Search message/path..." oninput="onFilterChange()">
+							<select id="log-type-filter" onchange="onFilterChange()">
+								<option value="">All Actions</option>
+								<option value="BLOCKED">Blocked</option>
+								<option value="CONN">Connections</option>
+								<option value="INSTALLER_KILLED">Killed Installers</option>
+								<option value="EXFIL">Poisoned Exfil</option>
+								<option value="WHITELISTED">Whitelisted</option>
+							</select>
+							<div class="log-pagination">
+								<button class="btn-page" id="btn-prev-page" onclick="changePage(-1)">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="15 18 9 12 15 6"></polyline></svg>
+								</button>
+								<span id="page-indicator" class="page-num">1 / 1</span>
+								<button class="btn-page" id="btn-next-page" onclick="changePage(1)">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="9 18 15 12 9 6"></polyline></svg>
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="logs-table-wrapper">
+						<table>
+							<thead>
+								<tr>
+									<th style="width: 85px;">Time</th>
+									<th style="width: 150px;">Action</th>
+									<th>Description</th>
+									<th style="width: 340px;">Process Lineage</th>
+								</tr>
+							</thead>
+							<tbody id="logs-body">
+								<!-- Threat logs dynamically stream here -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- ==================== CUSTOM LISTS TAB ==================== -->
+			<div class="tab-content" id="tab-lists">
+				<div class="lists-grid">
+					<!-- Domain Whitelist -->
+					<div class="card-surface list-card">
+						<div class="list-card-header">
+							<div class="list-card-title-group">
+								<span class="micro-label card-title">Custom Domain Whitelist</span>
+								<div class="tooltip-container">
+									<svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>
+									<span class="tooltip-text">Outbound HTTP/HTTPS hosts allowed by default. Bypasses strict mode blocking.</span>
+								</div>
+							</div>
+							<span id="domain-whitelist-count" class="badge">Rules</span>
+						</div>
+						<div class="list-input-group">
+							<input type="text" id="domain-whitelist-input" placeholder="e.g. registry.npmjs.org">
+							<button class="btn btn-primary" id="domain-whitelist-btn" onclick="addListItem('customDomainWhitelist', 'domain-whitelist-input', 'domain-whitelist-container')">Add</button>
+						</div>
+						<div class="list-help-text">
+							Supports wildcards (e.g. <code>*.github.com</code>) or regex prefixed with <code>r/</code> (e.g. <code>r/.*\.google\.com/</code>).
+						</div>
+						<div class="list-items-container" id="domain-whitelist-container">
+							<!-- Items render dynamically -->
+						</div>
+					</div>
+
+					<!-- Domain Blacklist -->
+					<div class="card-surface list-card">
+						<div class="list-card-header">
+							<div class="list-card-title-group">
+								<span class="micro-label card-title">Custom Domain Blacklist</span>
+								<div class="tooltip-container">
+									<svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>
+									<span class="tooltip-text">Explicitly banned outbound hosts. Connections to these domains are blocked instantly.</span>
+								</div>
+							</div>
+							<span id="domain-blacklist-count" class="badge">Rules</span>
+						</div>
+						<div class="list-input-group">
+							<input type="text" id="domain-blacklist-input" placeholder="e.g. malicious-tracker.net">
+							<button class="btn btn-primary" id="domain-blacklist-btn" onclick="addListItem('customDomainBlacklist', 'domain-blacklist-input', 'domain-blacklist-container')">Add</button>
+						</div>
+						<div class="list-help-text">
+							Supports wildcards (e.g. <code>*.attacker.com</code>) or regex prefixed with <code>r/</code> (e.g. <code>r/^bad-.*\.com$/</code>).
+						</div>
+						<div class="list-items-container" id="domain-blacklist-container">
+							<!-- Items render dynamically -->
+						</div>
+					</div>
+
+					<!-- Package Whitelist -->
+					<div class="card-surface list-card">
+						<div class="list-card-header">
+							<div class="list-card-title-group">
+								<span class="micro-label card-title">Custom Package Whitelist</span>
+								<div class="tooltip-container">
+									<svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>
+									<span class="tooltip-text">Packages allowed to bypass registry age checks, typosquatting alerts, and static scanner rules.</span>
+								</div>
+							</div>
+							<span id="package-whitelist-count" class="badge">Rules</span>
+						</div>
+						<div class="list-input-group">
+							<input type="text" id="package-whitelist-input" placeholder="e.g. react-native">
+							<button class="btn btn-primary" id="package-whitelist-btn" onclick="addListItem('customPackageWhitelist', 'package-whitelist-input', 'package-whitelist-container')">Add</button>
+						</div>
+						<div class="list-help-text">
+							Supports glob wildcards (e.g. <code>express*</code>, <code>@types/*</code>, or <code>eslint-*</code>).
+						</div>
+						<div class="list-items-container" id="package-whitelist-container">
+							<!-- Items render dynamically -->
+						</div>
+					</div>
+
+					<!-- Package Blacklist -->
+					<div class="card-surface list-card">
+						<div class="list-card-header">
+							<div class="list-card-title-group">
+								<span class="micro-label card-title">Custom Package Blacklist</span>
+								<div class="tooltip-container">
+									<svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>
+									<span class="tooltip-text">Explicitly banned packages. Any attempt to download or install these package names is blocked.</span>
+								</div>
+							</div>
+							<span id="package-blacklist-count" class="badge">Rules</span>
+						</div>
+						<div class="list-input-group">
+							<input type="text" id="package-blacklist-input" placeholder="e.g. evil-package-squat">
+							<button class="btn btn-primary" id="package-blacklist-btn" onclick="addListItem('customPackageBlacklist', 'package-blacklist-input', 'package-blacklist-container')">Add</button>
+						</div>
+						<div class="list-help-text">
+							Supports glob wildcards (e.g. <code>evil-*</code> or <code>bad-package*</code>).
+						</div>
+						<div class="list-items-container" id="package-blacklist-container">
+							<!-- Items render dynamically -->
+						</div>
+					</div>
+
+					<!-- Custom NPM Registries -->
+					<div class="card-surface list-card">
+						<div class="list-card-header">
+							<div class="list-card-title-group">
+								<span class="micro-label card-title">Custom NPM Registries</span>
+								<div class="tooltip-container">
+									<svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>
+									<span class="tooltip-text">Allowed custom NPM registry hosts. Requests here bypass public registry limitations.</span>
+								</div>
+							</div>
+							<span id="npm-registries-count" class="badge">Rules</span>
+						</div>
+						<div class="list-input-group">
+							<input type="text" id="npm-registries-input" placeholder="e.g. npm.pkg.github.com">
+							<button class="btn btn-primary" id="npm-registries-btn" onclick="addListItem('customNpmRegistries', 'npm-registries-input', 'npm-registries-container')">Add</button>
+						</div>
+						<div class="list-help-text">
+							Supports wildcards (e.g. <code>*.pkg.github.com</code> or <code>*.mycorp.internal</code>).
+						</div>
+						<div class="list-items-container" id="npm-registries-container">
+							<!-- Items render dynamically -->
+						</div>
+					</div>
+
+					<!-- Custom PyPI Registries -->
+					<div class="card-surface list-card">
+						<div class="list-card-header">
+							<div class="list-card-title-group">
+								<span class="micro-label card-title">Custom PyPI Registries</span>
+								<div class="tooltip-container">
+									<svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>
+									<span class="tooltip-text">Allowed custom PyPI registry hosts. Requests here bypass public registry limitations.</span>
+								</div>
+							</div>
+							<span id="pypi-registries-count" class="badge">Rules</span>
+						</div>
+						<div class="list-input-group">
+							<input type="text" id="pypi-registries-input" placeholder="e.g. pypi.mycorp.com">
+							<button class="btn btn-primary" id="pypi-registries-btn" onclick="addListItem('customPypiRegistries', 'pypi-registries-input', 'pypi-registries-container')">Add</button>
+						</div>
+						<div class="list-help-text">
+							Supports wildcards (e.g. <code>*.pypi.mycorp.com</code>).
+						</div>
+						<div class="list-items-container" id="pypi-registries-container">
+							<!-- Items render dynamically -->
+						</div>
+					</div>
+
+					<!-- Private Scopes -->
+					<div class="card-surface list-card">
+						<div class="list-card-header">
+							<div class="list-card-title-group">
+								<span class="micro-label card-title">Private Scopes / Prefixes</span>
+								<div class="tooltip-container">
+									<svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>
+									<span class="tooltip-text">Internal scope patterns. Blocks public registry downloads for safety while bypassing typosquat alerts.</span>
+								</div>
+							</div>
+							<span id="private-scopes-count" class="badge">Rules</span>
+						</div>
+						<div class="list-input-group">
+							<input type="text" id="private-scopes-input" placeholder="e.g. @mycorp/*">
+							<button class="btn btn-primary" id="private-scopes-btn" onclick="addListItem('privateScopes', 'private-scopes-input', 'private-scopes-container')">Add</button>
+						</div>
+						<div class="list-help-text">
+							Bypasses typosquat and age checks. Supports wildcards (e.g. <code>@mycorp/*</code> or <code>internal-*</code>).
+						</div>
+						<div class="list-items-container" id="private-scopes-container">
+							<!-- Items render dynamically -->
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ==================== SETTINGS TAB ==================== -->
+			<div class="tab-content" id="tab-settings">
+				<!-- Protection Mode -->
+				<div class="card-surface settings-section">
+					<div class="micro-label section-meta">Active Mode</div>
+					<h2 class="settings-title">
+						<!-- Animated Custom Target SVG -->
+						<svg class="section-icon animated-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="10" stroke="var(--color-eucalyptus)"></circle>
+							<circle cx="12" cy="12" r="6" stroke="var(--color-warm-loam)" class="pulse-ring"></circle>
+							<circle cx="12" cy="12" r="2" fill="currentColor"></circle>
+						</svg>
+						Protection Mode
+					</h2>
+					<p class="settings-description">
+						Controls how DevGate reacts to suspicious outbound connections from postinstall hooks and package manager processes.
+					</p>
+					<div class="mode-selector">
+						<button id="mode-strict" class="mode-btn" onclick="setMode('strict')">
+							<span class="mode-btn-title">Strict Mode</span>
+							<span class="mode-btn-desc">Auto-block all unapproved hook connections instantly</span>
+						</button>
+						<button id="mode-interactive" class="mode-btn" onclick="setMode('interactive')">
+							<span class="mode-btn-title">Interactive Mode</span>
+							<span class="mode-btn-desc">Pause and prompt via dashboard before blocking</span>
+						</button>
+						<button id="mode-audit" class="mode-btn" onclick="setMode('audit')">
+							<span class="mode-btn-title">Audit Mode</span>
+							<span class="mode-btn-desc">Log all warnings, allow traffic through</span>
+						</button>
+					</div>
+				</div>
+
+				<!-- Threat Intelligence & Reputation -->
+				<div class="card-surface settings-section">
+					<div class="micro-label section-meta">External Feeds</div>
+					<h2 class="settings-title">
+						<!-- Animated Custom Globe SVG -->
+						<svg class="section-icon animated-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="10"></circle>
+							<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" class="globe-longitude"></path>
+							<path d="M2 12h20"></path>
+						</svg>
+						Threat Intelligence & Reputation
+					</h2>
+					<p class="settings-description">
+						Enable real-time reputation scanning of outbound connections using background feeds and keyless verification.
+					</p>
+
+					<div class="feature-toggles">
+						<!-- Global Threat Intel Switch -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Real-Time Threat Intelligence</div>
+									<div class="toggle-desc">Enable scanning of outbound domain and IP connection attempts against dynamic reputation lists.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="threat-intel-switch" onchange="toggleThreatIntel(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+							<div id="threat-intel-settings-panel" class="sub-settings">
+								<!-- Local Sync -->
+								<div class="toggle-row nested-toggle">
+									<div class="toggle-info">
+										<div class="toggle-title">Background Feed Sync</div>
+										<div class="toggle-desc">
+											Download and cache reputation blocklists from URLhaus and Feodo Tracker daily for zero-latency lookups.
+											<div class="sync-action-wrapper" style="margin-top: 8px;">
+												<button id="sync-feeds-btn" class="btn btn-outline btn-xs" onclick="triggerFeedSync()">Sync Now</button>
+											</div>
+										</div>
+									</div>
+									<label class="switch">
+										<input type="checkbox" id="feed-sync-switch" onchange="toggleFeedSync(this.checked)" checked>
+										<span class="slider"></span>
+									</label>
+								</div>
+
+								<!-- Cloudflare DNS -->
+								<div class="toggle-row nested-toggle">
+									<div class="toggle-info">
+										<div class="toggle-title">Cloudflare Security DNS & DNSBL</div>
+										<div class="toggle-desc">Check unknown domains against Cloudflare's malware-blocking resolver (1.1.1.2) and query public IP blacklists.</div>
+									</div>
+									<label class="switch">
+										<input type="checkbox" id="cloudflare-dns-switch" onchange="toggleCloudflareDNS(this.checked)" checked>
+										<span class="slider"></span>
+									</label>
+								</div>
+
+								<!-- Live URLhaus API -->
+								<div class="toggle-row nested-toggle">
+									<div class="toggle-info">
+										<div class="toggle-title">URLhaus Live Lookup</div>
+										<div class="toggle-desc">Perform fallback live POST lookup queries to the URLhaus database with a strict 300ms timeout.</div>
+									</div>
+									<label class="switch">
+										<input type="checkbox" id="urlhaus-live-switch" onchange="toggleURLhausLive(this.checked)" checked>
+										<span class="slider"></span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- HTTPS Decryption & Root CA Certificate -->
+				<div class="card-surface settings-section">
+					<div class="micro-label section-meta">Inspection Keys</div>
+					<h2 class="settings-title">
+						<!-- Animated Custom Key/Unlock SVG -->
+						<svg class="section-icon animated-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778z"></path>
+							<path d="M12 2l3 3m-3-3l-3 3M19 4l-4.5 4.5M16.5 6.5L14 9" class="key-teeth"></path>
+						</svg>
+						HTTPS Decryption & Root CA
+					</h2>
+					<p class="settings-description">
+						Enable SSL/TLS Man-in-the-Middle (MITM) decryption to inspect secure HTTPS traffic, package registries, and exfiltration attempts from hook scripts without requiring plain HTTP fallbacks.
+					</p>
+
+					<div class="cert-status-card">
+						<div class="cert-status-header">
+							<div class="cert-status-title-group">
+								<span class="cert-label">Root CA Trust Status</span>
+								<span class="cert-desc-small">Current Windows user local trust store</span>
+							</div>
+							<div id="cert-status-badge" class="cert-badge cert-untrusted">Suspended</div>
+						</div>
+
+						<div class="cert-body-text">
+							<p>
+								DevGate generates a local, secure self-signed Root Certificate Authority (Root CA) specifically for your computer. Decryption allows scanning of dependencies downloaded over HTTPS and stops advanced script attacks trying to leak secrets over secure protocols.
+							</p>
+						</div>
+
+						<div class="cert-actions">
+							<button id="btn-trust-cert" class="btn btn-primary" onclick="trustCertificate()">
+								<svg class="btn-icon shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+									<path d="m9 11 2 2 4-4"/>
+								</svg>
+								Trust Root CA Certificate
+							</button>
+							<button id="btn-untrust-cert" class="btn btn-danger" onclick="untrustCertificate()">
+								<svg class="btn-icon trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<polyline points="3 6 5 6 21 6"></polyline>
+									<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+									<line x1="10" y1="11" x2="10" y2="17"></line>
+									<line x1="14" y1="11" x2="14" y2="17"></line>
+								</svg>
+								Remove / Untrust Certificate
+							</button>
+						</div>
+
+						<!-- HTTPS Decryption Toggle Switch -->
+						<div class="toggle-row border-top-divider">
+							<div class="toggle-info">
+								<div class="toggle-title">Enable HTTPS Decryption</div>
+								<div class="toggle-desc">Decrypt and inspect HTTPS requests to registries and outbound scripts (requires Root CA to be trusted above)</div>
+							</div>
+							<label class="switch">
+								<input type="checkbox" id="https-inspection-switch" onchange="toggleHttpsInspection(this.checked)">
+								<span class="slider"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<!-- Defense Features -->
+				<div class="card-surface settings-section">
+					<div class="micro-label section-meta">Mitigations</div>
+					<h2 class="settings-title">
+						<!-- Animated Custom Lock SVG -->
+						<svg class="section-icon animated-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+							<path class="lock-shackle" d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+						</svg>
+						Defense Features
+					</h2>
+					<p class="settings-description">
+						Toggle individual protection layers. Each feature can be independently enabled or disabled without affecting the others.
+					</p>
+
+					<div id="nocert-fallback-callout" class="info-callout">
+						<svg class="callout-icon" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+						</svg>
+						<div class="callout-content">
+							<strong>No-Cert Fallback Active:</strong> If you choose not to trust a Root CA certificate, you can configure your package manager to use plain HTTP registries (e.g., <code>npm config set registry http://registry.npmjs.org</code>). DevGate will scan the packages locally in plain text, and then automatically upgrade the outbound request to <strong>secure HTTPS</strong> before it exits your computer.
+						</div>
+					</div>
+
+					<div class="feature-toggles">
+						<!-- Honeypot -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Credential Honeypotting</div>
+									<div class="toggle-desc">Detect and replace exfiltrated secrets (AWS keys, Stripe tokens, etc) with fake poisoned values</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="honeypot-switch" onchange="toggleHoneypot(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+							<div class="details-accordion-wrapper">
+								<details class="sig-details">
+									<summary>
+										<svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+											<polyline points="9 18 15 12 9 6"></polyline>
+										</svg>
+										Show monitored secret signatures (<span id="secret-sigs-count">0</span>)
+									</summary>
+									<div id="secret-sigs-list" class="tag-flex-container"></div>
+								</details>
+							</div>
+						</div>
+
+						<!-- Registry Age Alerts -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Registry Age Alerts</div>
+									<div class="toggle-desc">Flag packages published to npm within the last 48 hours as potential supply chain risks</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="registry-age-switch" onchange="toggleRegistryAge(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Typosquatting Check -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Typosquatting Detection</div>
+									<div class="toggle-desc">Identify and block packages that mimic popular packages (e.g. lodassh vs lodash) using levenshtein distance, combosquatting, and visual similarity lookalikes.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="typosquat-switch" onchange="toggleTyposquat(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+							<div class="details-accordion-wrapper">
+								<details class="sig-details">
+									<summary>
+										<svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+											<polyline points="9 18 15 12 9 6"></polyline>
+										</svg>
+										Show protected popular packages (<span id="popular-pkgs-count">0</span>)
+									</summary>
+									<div id="popular-pkgs-list" class="tag-flex-container"></div>
+								</details>
+							</div>
+						</div>
+
+						<!-- NPM Tarball Scan -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">NPM Tarball Static Analysis</div>
+									<div class="toggle-desc">Scan downloaded NPM package tarballs (.tgz) in memory for malicious execution paths, shell spawns, exfil, and environment harvesting.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="tarball-scan-switch" onchange="toggleTarballScan(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- PyPI Scan -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">PyPI Package Static Analysis</div>
+									<div class="toggle-desc">Scan downloaded Python packages (.whl, .tar.gz) in memory for malicious dynamic code execution, reverse shell sockets, and environment theft.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="pypi-scan-switch" onchange="togglePypiScan(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Shannon Entropy Scan -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Shannon Entropy Scan</div>
+									<div class="toggle-desc">Calculate information entropy of source files inside downloaded packages to detect packed, encrypted, or obfuscated payloads (e.g. hex-escaped shellcodes).</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="entropy-scan-switch" onchange="toggleEntropyScan(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- AST Parse Analyzer -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">AST Parse Analyzer</div>
+									<div class="toggle-desc">Parse JavaScript code into an Abstract Syntax Tree (AST) to identify complex runtime evasion tricks like window["ev" + "al"] or dynamic requires.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="ast-scan-switch" onchange="toggleASTScan(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- YARA Rules Engine -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">YARA Signature Engine</div>
+									<div class="toggle-desc">Scan downloaded files in memory using YARA rules to detect complex multi-pattern signatures, reverse shells, and obfuscated download scripts.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="yara-switch" onchange="toggleYara(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Lockfile Drift -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Lockfile Drift Check</div>
+									<div class="toggle-desc">Validate every package download against your project lockfiles before allowing installation</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="lockfile-switch" onchange="toggleLockfile(this.checked)">
+									<span class="slider"></span>
+								</label>
+							</div>
+							<div id="lockfile-settings-panel" class="sub-settings">
+								<div class="settings-field">
+									<div class="control-label">Drift Action Mode</div>
+									<select id="lockfile-mode-select" onchange="changeLockfileMode(this.value)">
+										<option value="block">Block Installation</option>
+										<option value="prompt">Interactive Prompt</option>
+										<option value="audit">Audit Only (Log Warning)</option>
+									</select>
+								</div>
+								<div class="settings-field">
+									<div class="control-label">Custom Workspace / Lockfile Path</div>
+									<input type="text" id="lockfile-paths-input" onchange="updateLockfilePaths(this.value)" placeholder="e.g. C:\project or leave blank for auto-detect">
+								</div>
+							</div>
+						</div>
+
+						<!-- Subprocess Connection Guard -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Subprocess Connection Guard</div>
+									<div class="toggle-desc">Detect and block network connections initiated by high-risk native shells (e.g. <code>powershell.exe</code>, <code>cmd.exe</code>, <code>curl.exe</code>) spawned inside installer script hooks.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="subprocess-guard-switch" onchange="toggleSubprocessGuard(this.checked)">
+									<span class="slider"></span>
+								</label>
+							</div>
+							<div id="subprocess-guard-panel" class="sub-settings">
+								<div class="settings-field">
+									<div class="control-label">Network Strictness Level</div>
+									<select id="subprocess-strictness-select" onchange="changeSubprocessStrictness(this.value)">
+										<option value="lenient">Lenient (Allow LAN, whitelisted domains, loopback)</option>
+										<option value="strict">Strict (Block all except registry hosts)</option>
+										<option value="block_all">Block All (Disable all outgoing subprocess network traffic)</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<!-- Anti-Evasion Scanner -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Anti-Evasion Process Scanner</div>
+									<div class="toggle-desc">Detect and kill package installer processes if they scan running tasks or query systems for debuggers/antivirus tools (e.g. <code>wireshark</code>, <code>defender</code>, <code>fiddler</code>).</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="anti-evasion-switch" onchange="toggleAntiEvasion(this.checked)">
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Package Script Sanitizer -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Package Script Sanitizer</div>
+									<div class="toggle-desc">Automatically strip installation script hooks (preinstall, postinstall, etc.) from allowed package downloads to prevent installation-time code execution.</div>
+								</div>
+							</div>
+							<div class="sub-settings visible">
+								<div class="settings-field">
+									<div class="control-label">Sanitization Mode</div>
+									<select id="strip-scripts-mode-select" onchange="changeStripScriptsMode(this.value)">
+										<option value="never">Never Strip (Disabled)</option>
+										<option value="threats_only">On Threat Detections Only</option>
+										<option value="all_public">Strip All Public Registry Packages</option>
+										<option value="always">Strip All Packages</option>
+									</select>
+								</div>
+								<div id="strip-scripts-details-panel">
+									<div class="settings-field">
+										<div class="control-label">Script Hooks to Strip</div>
+										<input type="text" id="strip-scripts-targets-input" onchange="updateStripScriptsTargets(this.value)" placeholder="e.g. preinstall, install, postinstall">
+									</div>
+									<div class="settings-field" id="strip-scripts-threats-field">
+										<div class="control-label">Triggering Threat Categories</div>
+										<input type="text" id="strip-scripts-threats-input" onchange="updateStripScriptsThreats(this.value)" placeholder="e.g. SuspiciousReverseShell, EnvironmentExfiltration">
+									</div>
+									<div class="settings-field">
+										<div class="control-label">Exempt Packages & Scopes</div>
+										<input type="text" id="strip-scripts-exemptions-input" onchange="updateStripScriptsExemptions(this.value)" placeholder="e.g. esbuild, node-gyp, @babel/*">
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Sensitive File Access Guard -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Sensitive File Access Guard</div>
+									<div class="toggle-desc">Scan downloaded packages for references to sensitive credential paths (e.g. <code>.aws/credentials</code>, <code>.ssh/id_rsa</code>, <code>etc/passwd</code>).</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="sensitive-files-switch" onchange="toggleSensitiveFiles(this.checked)">
+									<span class="slider"></span>
+								</label>
+							</div>
+							<div id="sensitive-files-panel" class="sub-settings">
+								<div class="settings-field">
+									<div class="control-label">Detection Action</div>
+									<select id="sensitive-files-action-select" onchange="changeSensitiveFilesAction(this.value)">
+										<option value="block">Block Installation</option>
+										<option value="audit">Audit Only (Log Warning)</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<!-- Web UI Auto-Open -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Web Dashboard Auto-Open</div>
+									<div class="toggle-desc">Automatically launch your default web browser to open the settings dashboard on proxy startup. If disabled, threat prompts will spawn in a console window.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="webui-switch" onchange="toggleWebUI(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Run on Startup -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Run on Windows Startup</div>
+									<div class="toggle-desc">Automatically start DevGate in the system tray when you log into Windows, ensuring constant background protection.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="startup-switch" onchange="toggleRunOnStartup(this.checked)">
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Dependency Confusion -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Dependency Confusion Defense</div>
+									<div class="toggle-desc">Block private scoped or prefixed packages (e.g. <code>@mycorp/*</code>) from being requested from public registries to prevent namespace hijacking.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="confusion-switch" onchange="toggleDependencyConfusion(this.checked)">
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Sandbox Deception Spoofing -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Sandbox Deception Mode</div>
+									<div class="toggle-desc">Inject simulated sandbox and CI environment variables (<code>CI=true</code>, <code>GITHUB_ACTIONS=true</code>) in devgate shells to trick malware into sleep/evasion mode. (Note: Tricked malware may hang or exit silently).</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="deception-switch" onchange="toggleSandboxSpoofing(this.checked)">
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Sandbox Evasion Action -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Sandbox Evasion Reaction</div>
+									<div class="toggle-desc">Configure the action to take when a downloaded package contains sandbox or VM detection checks.</div>
+								</div>
+								<select id="evasion-action-select" onchange="changeSandboxEvasionAction(this.value)">
+									<option value="block">Block Installation</option>
+									<option value="poison">Poison Exfiltration</option>
+									<option value="audit">Audit Only (Log Warning)</option>
+								</select>
+							</div>
+						</div>
+
+						<!-- Threat Intercept Timeout -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Threat Intercept Timeout</div>
+									<div class="toggle-desc">Define the duration (in seconds) the proxy waits for a developer decision on intercepted hooks before automatically blocking.</div>
+								</div>
+								<div class="input-inline-wrapper">
+									<input type="number" id="prompt-timeout-input" onchange="changePromptTimeout(this.value)" min="5" max="300">
+									<span class="input-unit">seconds</span>
+								</div>
+							</div>
+						</div>
+
+						<!-- Kill Installer on Threat -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Kill Installer on Hook Connection</div>
+									<div class="toggle-desc">Automatically terminate the entire package manager process tree (npm, pip, yarn, etc.) when a behavioral threat (active script outbound connection) is blocked. Note: When enabled, this overrides protection mode to abort execution immediately.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="kill-threat-switch" onchange="toggleKillInstaller(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Kill Installer on Static Threat -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Kill Installer on Static Threat</div>
+									<div class="toggle-desc">Automatically terminate the entire package manager process tree when a static check (YARA, AST, or entropy) detects malicious patterns inside a downloaded package before it can extract/run.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="kill-static-threat-switch" onchange="toggleKillStaticInstaller(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Auto-Clean Partially Written Files -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">Auto-Clean Aborted Packages</div>
+									<div class="toggle-desc">Automatically execute the package manager's clean-up command (e.g. <code>npm uninstall</code> or <code>pip uninstall</code>) in the terminal to remove partially written files when an installation is aborted.</div>
+								</div>
+								<label class="switch">
+									<input type="checkbox" id="auto-cleanup-switch" onchange="toggleAutoCleanup(this.checked)" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<!-- Global Terminal Integration (PATH Setup) -->
+						<div class="toggle-card">
+							<div class="toggle-row">
+								<div class="toggle-info">
+									<div class="toggle-title">
+										Global Terminal Integration
+										<span id="install-global-badge" class="cert-badge cert-trusted" style="margin-left: 8px; display: none;">Registered</span>
+									</div>
+									<div class="toggle-desc">Register DevGate globally and add it to your user PATH variable. This allows you to run <code>devgate shell</code> directly from any project working directory.</div>
+								</div>
+								<button id="btn-install-global" class="btn btn-secondary" onclick="installGlobally()" style="flex: none; min-width: 180px;">
+									Register Globally
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<!-- Interactive Blocking Prompt Modal -->
+	<div class="modal-overlay" id="prompt-modal">
+		<div class="modal-card">
+			<div class="modal-header">
+				<div class="micro-label modal-alert-tag">Security Action Required</div>
+				<h3 class="modal-title">
+					<svg class="warning-icon" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+					</svg>
+					Threat Intercepted
+				</h3>
+			</div>
+			<div class="modal-desc">
+				An outbound connection attempt has been paused by the proxy. Please verify if this connection is authorized.
+			</div>
+			<div class="modal-meta-box">
+				<div class="modal-meta-row" id="modal-package-row" style="display: none;">
+					<span class="modal-meta-label">Package Name:</span>
+					<span class="modal-meta-val danger-text" id="modal-package">unknown</span>
+				</div>
+				<div class="modal-meta-row">
+					<span class="modal-meta-label">Target Host:</span>
+					<span class="modal-meta-val" id="modal-host">evil-attacker.com</span>
+				</div>
+				<div class="modal-meta-row">
+					<span class="modal-meta-label">Process Tree:</span>
+					<span class="modal-meta-val" id="modal-process">curl.exe -> node.exe</span>
+				</div>
+			</div>
+			<div class="modal-actions">
+				<button class="btn btn-danger" id="btn-kill-action" onclick="submitDecision('kill')">Kill Installer</button>
+				<button class="btn btn-outline" id="btn-block-action" onclick="submitDecision('block')">Block</button>
+				<button class="btn btn-outline" id="btn-allow-action" onclick="submitDecision('allow')">Allow Once</button>
+				<button class="btn btn-primary" id="btn-whitelist-action" onclick="submitDecision('whitelist')">Allow Always</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Dashboard Logic -->
+	<script src="/dashboard.js"></script>
+</body>
+</html>

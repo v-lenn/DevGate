@@ -1,0 +1,23 @@
+[
+  "axios", "express", "lodash", "react", "chalk", "commander",
+  "request", "moment", "fs-extra", "dotenv", "tslib", "uuid",
+  "react-dom", "debug", "semver", "bluebird", "async", "underscore",
+  "webpack", "eslint", "prettier", "typescript", "jest", "mocha",
+  "chai", "sinon", "cypress", "puppeteer", "superagent", "node-fetch",
+  "got", "needle", "koa", "fastify", "nestjs", "angular", "vue",
+  "svelte", "next", "nuxt", "tailwindcss", "bootstrap", "jquery",
+  "sass", "less", "terser", "gulp", "nodemon", "pm2", "shelljs",
+  "graceful-fs", "inherits", "safe-buffer", "readable-stream",
+  "string_decoder", "punycode", "object-assign", "isarray", "buffer",
+  "numpy", "pandas", "requests", "tensorflow", "torch", "scikit-learn",
+  "scipy", "matplotlib", "seaborn", "keras", "django", "flask",
+  "fastapi", "jinja2", "click", "black", "flake8", "pytest", "tox",
+  "sphinx", "boto3", "botocore", "s3transfer", "virtualenv", "pip",
+  "setuptools", "wheel", "twine", "poetry", "pipenv", "conda",
+  "urllib3", "certifi", "idna", "charset-normalizer", "cryptography",
+  "bcrypt", "pyjwt", "passlib", "sqlalchemy", "alembic", "psycopg2",
+  "pymongo", "redis", "celery", "pydantic", "pyyaml", "lxml",
+  "beautifulsoup4", "scrapy", "selenium", "httpx", "aiohttp",
+  "colorama", "tqdm", "rich", "pillow", "opencv-python",
+  "transformers", "datasets", "evaluate"
+]
